@@ -35,10 +35,14 @@ h1, h2, h3, h4, h5, h6 {
 
 a {
     text-decoration: none;
+    color: rgb(93, 74, 136);
+}
+
+a:hover {
+    color: red;
 }
 
 #link {
-    color: rgb(93, 74, 136);
     font-size: 1.5rem;
 }
 
@@ -154,6 +158,10 @@ section {
 .socials li {
     padding: 0 3px;
     margin-bottom: 0;
+}
+
+#linkedin {
+    height: 3.5rem;
 }
 
 .burger {
@@ -357,8 +365,8 @@ section {
     text-align : center;
 }
 
-.auteurs {
-    text-align : center;
+.grid__item__study a:hover {
+    color: red;
 }
 
 @media screen and (min-width:750px) {
@@ -622,6 +630,10 @@ footer .socials {
     text-align: center;
 }
 
+.auteurs {
+    text-align : center;
+}
+
 @media screen and (min-width:750px) {
     footer {
         text-align: left;
@@ -632,9 +644,16 @@ footer .socials {
     }
 }
 
+/* Legal page */
+
 #legal {
     padding-left: 2rem;
     padding-right: 2rem;
+}
+
+#link__legal {
+    color: rgb(93, 74, 136);
+    font-size: 1.25rem;
 }
 
 #legal h4 {
