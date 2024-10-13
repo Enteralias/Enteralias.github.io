@@ -119,7 +119,7 @@ section {
 
 /* header */
 .header {
-    background:#1b1b1b;
+    background:#303030;
     position: sticky;
     top: 0;
     z-index: 1;
@@ -133,7 +133,7 @@ section {
 }
 
 .header a {
-    color:rgba(21, 129, 21, 0.507);
+    color:rgb(20, 134, 20);
 }
 
 .header a:hover {
