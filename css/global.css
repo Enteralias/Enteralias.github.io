@@ -2,7 +2,12 @@
 /* Base */
 
 :root {
-    --color-body: rgba(14, 117, 10, 0.808);
+    --color-body: #0496ff;
+    --blue: #006ba6;
+    --lblue: #0496ff;
+    --light: #b8e0d2;
+    --dark: #2d2d2a;
+    --pred: #36151e;
 }
 
 * {
@@ -18,18 +23,18 @@ body {
     font-size: 1.6rem;
     line-height: 1.6;
     color: var(--color-body);
-    background: #000;
+    background: #002538;
     margin:0;
 }
 
 h1, h2, h3, h4, h5, h6 {
-    color: #20791c;
+    color: #b8e0d2;
     line-height: 1;
 }
 
 .grid__item__study h3 {
     text-align: center;
-    color: red;
+    color: #b8e0d2;
     line-height: 1;
 }
 
@@ -39,7 +44,7 @@ a {
 }
 
 a:hover {
-    color: red;
+    color: #b8e0d2;
 }
 
 #link {
@@ -133,11 +138,11 @@ section {
 }
 
 .header a {
-    color:rgb(20, 134, 20);
+    color:#0496ff;
 }
 
 .header a:hover {
-    color: red;
+    color: #b8e0d2;
 }
 
 .logo p {
@@ -339,7 +344,7 @@ section {
 }
 
 .study a {
-    color: rgb(93, 74, 136);
+    color: #b13355;
 }
 
 @media screen and (max-width:749px) {
@@ -410,7 +415,7 @@ section {
 
 .skills h4 {
     margin: 0 0.3rem 0.3rem 0;
-    color: red;
+    color: #006ba6
 }
 
 .skills p {
@@ -419,13 +424,13 @@ section {
 
 .skills li {
     background-color: #0c0c0c;
-    border-left: 3px solid #033007;
+    border-left: 3px solid #0496ff;
     padding: 0.9rem 2rem;
 }
 
 .skills .progressbar {
     background: #0c0c0c;
-    color: red;
+    color: #006ba6;
     margin-bottom: 1rem;
 }
 
@@ -446,6 +451,90 @@ section {
     #gi__right {
         padding-left: 3.5rem;
     }
+}
+
+#list {
+    margin-bottom: 1.3rem;
+}
+
+.burgerskills {
+    display: block;
+    padding: 1rem;
+    margin-top: 2rem;
+    background: #000;
+    color: var(--lblue);
+    width: auto;
+    min-width: 160px;
+    min-height: 20px;
+    font-size: 1.5rem;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 50%;
+    transition: all .4s;
+}
+
+.burgerskills:hover {
+    cursor: pointer;
+    background: #36151e;
+    transition: all .4s;
+    transform: scale(1.04);
+}
+
+.resume {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+}
+
+#modalImage {
+    max-width: 90%;
+    max-height: 90%;
+    margin: auto;
+    display: block;
+}
+
+.close {
+    position: absolute;
+    top: 15px;
+    right: 25px;
+    color: white;
+    font-size: 36px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover, .close:focus {
+    color: #f44336;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#zoomControls {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    z-index: 2;
+}
+
+#zoomControls button {
+    background-color: rgba(255, 255, 255, 0.7);
+    border: none;
+    font-size: 20px;
+    margin: 5px;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+#zoomControls button:hover {
+    background-color: rgba(255, 255, 255, 0.9);
 }
 
 .portfolio {
@@ -471,7 +560,7 @@ section {
 }
 
 .portfolio__filters a {
-    color: #20791c;
+    color: #0496ff;
     background: #000;
     display: flex;
     flex: 1;
@@ -480,7 +569,7 @@ section {
 }
 
 .portfolio__filters a.active {
-    color: red;
+    color: #b8e0d2;
 }
 
 .modal {
@@ -607,7 +696,7 @@ section {
 
 .form .btn:hover {
     cursor: pointer;
-    background: red;
+    background: #36151e;
     transition: all .4s;
     transform: scale(1.04);
 }
@@ -617,7 +706,7 @@ section {
 footer {
     background: #1b1b1b;
     ;
-    color: rgba(21, 129, 21, 0.507);
+    color: #0496ff;
     text-align: center;
     font-size: 1.4rem;
 }

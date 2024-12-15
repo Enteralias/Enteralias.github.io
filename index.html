@@ -59,7 +59,7 @@
                     </div>
                     <div class="intro__item right">
                         <div class="intro__avatar">
-                            <img width="180" height="252" src="./img/Avatar livre.jpg" alt="Yannick GRAS - développeur fullstack">
+                            <img width="180" height="252" src="./img/Avatar_livre_flottant.jpg" alt="Yannick GRAS - développeur fullstack">
                         </div>
                     </div>
                 </div>
@@ -75,7 +75,7 @@
         <section id="study" class="study">
             <div class="container">
                 <div class="section-header">
-                    <h2 class="section__title">Un long fleuve troublé</h2> 
+                    <h2 class="section__title" id="SIO">Un long fleuve troublé</h2> 
                     <p>Avant d'en arriver là, Yannick passa des années à développer ses compétences dans divers domaines _ et il ne compte pas arrêter d'apprendre.
                     </p>
                 </div>
@@ -94,7 +94,7 @@
                     </div>
                     <div class="service__content">
                         <h3>Services informatiques</h3>
-                        <p>Grâce notamment à un <a href="https://www.onisep.fr/ressources/univers-formation/formations/post-bac/bts-services-informatiques-aux-organisations-option-b-solutions-logicielles-et-applications-metiers" alt="BTS SIO">BTS Services Informatiques aux organisations</a> (SIO), avec des examens en 2025, Yannick a étudié la cybersécurité, les bases de données, la gestion des versions, la conception et le développement des solutions applicatives, au sein du <a href="https://greta-bretagne.ac-rennes.fr/portail/web/notre-reseau/greta-cfa-des-cotes-d-armor/agence-de-lannion-guingamp">GRETA de Lannion</a> (centre de formation pour adultes). Il s'est aussi formé sur le "no-code" (<a href="https://bubble.io/" alt="Bubble.io">Bubble.io</a>). Avant de se jeter à corps perdu dans les batailles du développement, il a appris à appréhender l'architecture logicielle.<br>
+                        <p>Grâce notamment à un <a href="https://www.onisep.fr/ressources/univers-formation/formations/post-bac/bts-services-informatiques-aux-organisations-option-b-solutions-logicielles-et-applications-metiers" alt="BTS SIO">BTS Services Informatiques aux organisations</a> (SIO), avec des examens en 2025, Yannick a étudié la cybersécurité, les bases de données, la gestion des versions, la conception et le développement de solutions logicielles et applications métiers au sein du <a href="https://greta-bretagne.ac-rennes.fr/portail/web/notre-reseau/greta-cfa-des-cotes-d-armor/agence-de-lannion-guingamp">GRETA de Lannion</a> (centre de formation pour adultes). Il s'est aussi formé sur le "no-code" (<a href="https://bubble.io/" alt="Bubble.io">Bubble.io</a>). Avant de se jeter à corps perdu dans les batailles du développement, il a appris à appréhender l'architecture logicielle.<br>
                         <br>
                         #HTML/CSS #JS #SQL #Symfony #Python #WinDesign #SIO #Bubble.io #Wordpress #etc.
                         </p>
@@ -187,7 +187,7 @@
                             <div class="bar" style="width:12%">SQL</div>
                         </div>
                         <div class=progressbar> 
-                            <div class="bar" style="width:9%">PYTHON</div>
+                            <div class="bar" style="width:9%">Python</div>
                         </div>
                         <div class=progressbar> 
                             <div class="bar" style="width:45%">Bubble.io</div>
@@ -196,25 +196,34 @@
                         </p>
                     </div>
                 </div>
-                <!-- <div class="container">
+                <div class="container" id="realisations">
                     <h2 class="section__title">Support et mise à disposition de services informatiques</h2>
-                    <p>Grâce au bloc 1 du BTS SIO, Yannick est en mesure de :
+                    <p id="list">Grâce à différentes expériences professionnelles, Yannick est aujourd'hui en mesure de :
                         <ui>
-                            <li>Gérer les actifs informatiques et les habilitations des acteurs&nbsp;;
+                            <li><a href='https://github.com/Enteralias/Enteralias.github.io' title="Gérer des sauvegardes">Gérer les actifs informatiques et les habilitations des acteurs&nbsp;;</a>
                             </li>
-                            <li>Répondre aux demandes d'assistance et de résoudre les incidents&nbsp;;
+                            <li><a href="#SIO" title="Développement de la compétence à travers les cours du BTS">Répondre aux demandes d'assistance et de résoudre les incidents&nbsp;;</a>
                             </li>
-                            <li>Développer le site internet d'une organisation, dans le respect des obligations juridiques et en tenant compte des enjeux économiques&nbsp;;
+                            <li><a href='https://github.com/Enteralias/Enteralias.github.io' title="Développer la présence en ligne">Développer le site internet d'une organisation, dans le respect des obligations juridiques et en tenant compte des enjeux économiques&nbsp;;</a>
                             </li>
-                            <li>Travailler en mode projet, avec un découpage de tâches réaliste, des livrables conformes, des écarts justifiés, etc.&nbsp;;
+                            <li><a href='https://github.com/tomSample/bon_appetit' title="Objectifs, organisation et planification">Travailler en mode projet, avec un découpage de tâches réaliste, des livrables conformes, des écarts justifiés, etc.&nbsp;;</a>
                             </li>
-                            <li>Mettre en place un service informatique, le tester et informer les utilisateurs&nbsp;;
+                            <li><a href="#SIO" title="Développement de la compétence à travers les cours du BTS">Mettre en place un service informatique, le tester et informer les utilisateurs&nbsp;;</a>
                             </li>
-                            <li>Développer ses compétences professionnelles à travers ses besoins en formation et la mise en place d'une veille technologique régulière.
+                            <li><a href="https://fr.linkedin.com/in/yannick-gras" title="Remise à niveau, recherche de prérequis, certifications et réseaux sociaux">Développer ses compétences professionnelles à travers ses besoins en formation et la mise en place d'une veille technologique régulière.</a>
                             </li>
                         </ui>
                     </p>
-                </div>-->
+                    <button class="burgerskills" id="open">Afficher le résumé</button>
+                </div>
+                <div id="Modal" class="resume">
+                    <span id="closeBtn" class="close">&times;</span>
+                    <img id="modalImage" src="./img/Tableau_de_synthese.jpg" alt="Yannick GRAS - compétences réalisations">
+                    <div id="zoomControls">
+                        <button id="zoomInBtn">+</button>
+                        <button id="zoomOutBtn">-</button>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -363,15 +372,14 @@
                                 En plus des productions en tant que développeur informatique, Yannick se charge de la gestion de projet.
                             </p>
                             <h5>Langages</h5>
-                            <p>HTML, CSS, PHP, Javascript<br>
-                            <i>Back-end prévu à partir de novembre</i>
+                            <p>HTML, CSS, PHP, Javascript, Java
                             </p>
                             <h5>Environnements de production</h5>
                             <p>Git & Git Hub, XAMPP
                             </p>
                             <h5>Gestion de projet</h5>
                             <p>
-                            Gantt (utilisé seulement à l'amorçage pour découper le projet et pour déterminer la charge de travail hebdomadaire)&nbsp;;<br>
+                            Gantt (utilisé pour amorcer le projet puis le découper et déterminer la charge de travail hebdomadaire)&nbsp;;<br>
                             Trello (management collectif hebdomaire, gestion des reviews et organisation individuelle en Scrum).
                             </p>
                         </div>

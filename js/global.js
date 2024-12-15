@@ -19,6 +19,53 @@ function menuMobile() {
 menuMobile();
 
 
+/* Actions Compétences */
+function showCompetencies() {
+    const openImageBtn = document.getElementById('open');
+    const modal = document.getElementById('Modal');
+    const closeBtn = document.getElementById('closeBtn');
+
+// Ouvrir l'image au clic du bouton
+    openImageBtn.onclick = function() {
+        modal.style.display = 'flex'; // Afficher le modal
+    };
+
+// Fermer le modal au clic sur la croix ou sur le fond sombre
+    closeBtn.onclick = function() {
+        modal.style.display = 'none'; // Cacher le modal
+    };
+
+// Fermer le modal si on clique en dehors de l'image
+    window.onclick = function(event) {
+        if (event.target === modal) {
+            modal.style.display = 'none'; // Cacher le modal si on clique en dehors
+        }
+    };
+}
+
+showCompetencies();
+
+
+function zoomCompetencies() {
+    let scale = 1; 
+    const modalImage = document.getElementById('modalImage');
+    const zoomInBtn = document.getElementById('zoomInBtn');
+    const zoomOutBtn = document.getElementById('zoomOutBtn');
+
+    zoomInBtn.onclick = function() {
+        scale *= 1.1;
+        modalImage.style.transform = `scale(${scale})`;
+    };
+
+    zoomOutBtn.onclick = function() {
+        scale /= 1.1;
+        modalImage.style.transform = `scale(${scale})`;
+    };
+}
+
+zoomCompetencies();
+
+
 /* Réalisations */
 
 function tabsFilters() {
