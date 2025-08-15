@@ -129,18 +129,18 @@ function showProjetsDetails() {
     });
 }
 
-
 showProjetsDetails();
 
-/* Blog */
-// Configuration sécurisée
+
+        /* Blog */
+    // Configuration sécurisée
 const BLOG_CONFIG = {
   API_URL: 'https://bblog-psi.vercel.app/api/articles',
   TIMEOUT: 10000, // 10 secondes max
   MAX_RETRIES: 2
 };
 
-// Fonction pour nettoyer/sécuriser le contenu HTML
+    // Fonction pour nettoyer/sécuriser le contenu HTML
 function sanitizeHTML(html) {
   const div = document.createElement('div');
   div.textContent = html; // Échappe automatiquement le HTML
@@ -179,7 +179,7 @@ async function loadBlogArticles() {
     
     // Vérification de la réponse
     if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      throw new Error(`Erreur serveur (${response.status})`);
     }
     
     const articles = await response.json();
@@ -206,8 +206,9 @@ async function loadBlogArticles() {
     // Message d'erreur user-friendly (sans détails techniques)
     container.innerHTML = `
       <div class="error-message">
-        <p>Impossible de charger les articles actuellement.</p>
+        <p>Les articles ne sont pas disponibles pour le moment.</p>
         <button onclick="loadBlogArticles()" class="retry-btn">Réessayer</button>
+        <a href="blog.html" class="btn-blog">Lire le blog ici →</a>
       </div>
     `;
   }
@@ -261,16 +262,13 @@ function openArticleModal(slug) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-  console.log('DOM chargé !');
-  console.log('BLOG_CONFIG existe ?', typeof BLOG_CONFIG);
-  
   if (document.getElementById('articles-preview')) {
-    console.log('Container trouvé, chargement...');
     loadBlogArticles();
   } else {
     console.log('Container articles-preview non trouvé !');
   }
 });
+
 
 
 
