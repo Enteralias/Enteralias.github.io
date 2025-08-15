@@ -1,3 +1,7 @@
+console.log('=== DEBUT GLOBAL.JS ===');
+window.BLOG_CONFIG = { API_URL: 'https://bblog-psi.vercel.app/api/articles', TIMEOUT: 10000, MAX_RETRIES: 2 };
+console.log('BLOG_CONFIG défini:', window.BLOG_CONFIG);
+
 /* Menu mobile */
 
 function menuMobile() {
@@ -266,6 +270,7 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('Container articles-preview non trouvé !');
   }
 });
+
 
 
 
