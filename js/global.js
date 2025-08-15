@@ -1,7 +1,3 @@
-console.log('=== DEBUT GLOBAL.JS ===');
-window.BLOG_CONFIG = { API_URL: 'https://bblog-psi.vercel.app/api/articles', TIMEOUT: 10000, MAX_RETRIES: 2 };
-console.log('BLOG_CONFIG défini:', window.BLOG_CONFIG);
-
 /* Menu mobile */
 
 function menuMobile() {
@@ -28,7 +24,12 @@ function showCompetencies() {
     const openImageBtn = document.getElementById('open');
     const modal = document.getElementById('Modal');
     const closeBtn = document.getElementById('closeBtn');
-
+    
+if (!openImageBtn || !modal || !closeBtn) {
+    console.log('Élément modal désactivé');
+    return;
+}
+    
 // Ouvrir l'image au clic du bouton
     openImageBtn.onclick = function() {
         modal.style.display = 'flex'; // Afficher le modal
@@ -133,7 +134,7 @@ showProjetsDetails();
 
 /* Blog */
 // Configuration sécurisée
-window.BLOG_CONFIG = {
+const BLOG_CONFIG = {
   API_URL: 'https://bblog-psi.vercel.app/api/articles',
   TIMEOUT: 10000, // 10 secondes max
   MAX_RETRIES: 2
@@ -270,6 +271,7 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('Container articles-preview non trouvé !');
   }
 });
+
 
 
 
