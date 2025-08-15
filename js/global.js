@@ -48,7 +48,7 @@ if (!openImageBtn || !modal || !closeBtn) {
     };
 }
 
-showCompetencies(); */
+showCompetencies(); 
 
 
 function zoomCompetencies() {
@@ -68,7 +68,7 @@ function zoomCompetencies() {
     };
 }
 
-zoomCompetencies();
+zoomCompetencies(); */
 
 
 /* Réalisations */
@@ -271,6 +271,7 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('Container articles-preview non trouvé !');
   }
 });
+
 
 
 
