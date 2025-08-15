@@ -155,6 +155,8 @@ function validateArticle(article) {
 // Fonction principale pour charger les articles
 async function loadBlogArticles() {
   const container = document.getElementById('articles-preview');
+    console.log('Container trouvé:', container); // Doit afficher l'élément HTML
+    console.log('API URL:', BLOG_CONFIG.API_URL); // Doit afficher ton URL psi
   
   try {
     // Configuration sécurisée de fetch
@@ -262,5 +264,6 @@ document.addEventListener('DOMContentLoaded', function() {
     loadBlogArticles();
   }
 });
+
 
 
