@@ -127,7 +127,7 @@ function showProjetsDetails() {
 
 showProjetsDetails();
 
-/* Réalisations */
+/* Blog */
 // Configuration sécurisée
 const BLOG_CONFIG = {
   API_URL: 'https://bblog-psi.vercel.app/api/articles',
@@ -154,7 +154,7 @@ function validateArticle(article) {
 
 // Fonction principale pour charger les articles
 async function loadBlogArticles() {
-  const container = document.getElementById('articles-container');
+  const container = document.getElementById('articles-preview');
   
   try {
     // Configuration sécurisée de fetch
@@ -185,7 +185,7 @@ async function loadBlogArticles() {
     }
     
     // Filtrer et valider chaque article
-    const validArticles = articles.filter(validateArticle);
+    const validArticles = articles.filter(validateArticle).slice(0, 3);
     
     if (validArticles.length === 0) {
       container.innerHTML = '<p class="no-articles">Aucun article disponible pour le moment.</p>';
@@ -262,4 +262,5 @@ document.addEventListener('DOMContentLoaded', function() {
     loadBlogArticles();
   }
 });
+
 
