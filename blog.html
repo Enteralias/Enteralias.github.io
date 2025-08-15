@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>Yannick GRAS - Blog</title>
+    <meta name="blog" content="Portfolio de Yannick GRAS - Informaticien gestionnaire">
+    <link rel="shortcut icon" href="./img/favicon.ico" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/blog.css">
+</head>
+<body>
+    <!-- Navigation -->
+<nav class="navbar">
+                    <ul class="menu list-unstyled">
+                        <li><a href="#intro">Accueil</a></li>
+                        <li><a href="#about">A propos</a></li>
+                        <li><a href="#skills">Compétences</a></li>
+                        <li><a href="#portfolio">Réalisations</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </nav>
+
+    <!-- Header Blog -->
+    <header class="blog-header">
+        <div class="container">
+            <h1>Blog</h1>
+            <p>Mes réflexions sur la cybersécurité, le développement web et la tech</p>
+        </div>
+    </header>
+
+    <!-- Filtres et Recherche -->
+    <section class="blog-filters">
+        <div class="container">
+            <div class="filters-row">
+                <div class="search-box">
+                    <input type="text" id="search-input" placeholder="Rechercher un article...">
+                    <button id="search-btn">🔍</button>
+                </div>
+                <div class="tag-filters">
+                    <button class="tag-filter active" data-tag="all">Tous</button>
+                    <button class="tag-filter" data-tag="cybersécurité">Cybersécurité</button>
+                    <button class="tag-filter" data-tag="javascript">JavaScript</button>
+                    <button class="tag-filter" data-tag="web">Développement Web</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Liste des Articles -->
+    <main class="blog-main">
+        <div class="container">
+            <div id="blog-articles" class="blog-grid">
+                <div class="loading">Chargement des articles...</div>
+            </div>
+            
+            <!-- Pagination -->
+            <div id="pagination" class="pagination" style="display: none;">
+                <button id="prev-btn" class="btn-pagination">← Précédent</button>
+                <span id="page-info">Page 1 sur 1</span>
+                <button id="next-btn" class="btn-pagination">Suivant →</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal Article -->
+    <div id="article-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="modal-article-content">
+                <div class="loading">Chargement de l'article...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer  -->
+        <footer>
+            <div class="container">
+                <div class="grid">                  
+                    <div class="grid__item__contenu">
+                        <p>Le contenu de ce site ne peut pas être diffusé ou reproduit sans autorisation écrite.</p>
+                        <a href="legal.html">Mentions légales</a>
+                    </div>
+                </div>
+            </div>
+            <div class="auteurs">
+                <p>Icônes créées par <a href='https://get-picto.com/gratuit/linkedin-logo-black-transparent/'>get-picto.com</a>, <a href="https://www.flaticon.com/fr/icones-gratuites/projet" title="projet icônes">afitrose - Flaticon</a>, <a href="https://www.flaticon.com/fr/icones-gratuites/mathematiques" title="mathématiques icônes">Rabit Jes - Flaticon</a>, <a href="https://www.flaticon.com/fr/icones-gratuites/environnement" title="environnement icônes">Iconixar - Flaticon</a> et <a href="https://www.flaticon.com/fr/icones-gratuites/infrastructure" title="infrastructure icônes">Pojok d - Flaticon</a>.</p>
+            </div>
+        </footer>
+
+    <script src="js/blog.js"></script>
+</body>
+</html>
