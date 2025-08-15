@@ -129,7 +129,7 @@ showProjetsDetails();
 
 /* Blog */
 // Configuration sécurisée
-var BLOG_CONFIG = {
+const BLOG_CONFIG = {
   API_URL: 'https://bblog-psi.vercel.app/api/articles',
   TIMEOUT: 10000, // 10 secondes max
   MAX_RETRIES: 2
@@ -262,6 +262,7 @@ document.addEventListener('DOMContentLoaded', function() {
     loadBlogArticles();
   }
 });
+
 
 
 
