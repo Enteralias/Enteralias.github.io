@@ -255,13 +255,18 @@ function openArticleModal(slug) {
   // TODO: Modal avec contenu complet sécurisé
 }
 
-// Chargement automatique au démarrage
 document.addEventListener('DOMContentLoaded', function() {
-  // Vérifier que la section blog existe
+  console.log('DOM chargé !');
+  console.log('BLOG_CONFIG existe ?', typeof BLOG_CONFIG);
+  
   if (document.getElementById('articles-preview')) {
+    console.log('Container trouvé, chargement...');
     loadBlogArticles();
+  } else {
+    console.log('Container articles-preview non trouvé !');
   }
 });
+
 
 
 
