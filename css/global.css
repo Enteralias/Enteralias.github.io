@@ -307,7 +307,7 @@ section {
 /* Blog */
 .blog-section {
     padding: 60px 0;
-    background-color: #0c0c0c;
+    background-color:  var(--blue);
 }
 
 .articles-grid {
@@ -793,6 +793,7 @@ footer .socials {
     text-align: center;
 
 }
+
 
 
 
