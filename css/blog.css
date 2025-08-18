@@ -1,9 +1,9 @@
 /* Blog Page Styles */
 
 .blog-header {
-    background: linear-gradient(135deg, #667eea 0%, #002538 100%);
-    color: linear-gradient(45deg, var(--dblue) 0%, var(--lblue) 100%);
-    padding: 80px 0;
+    background: var(--dblue);
+    color: var(--lblue);
+    padding: 8px 0;
     text-align: center;
 }
 
@@ -11,6 +11,10 @@
     font-size: 3rem;
     margin-bottom: 10px;
     font-weight: 700;
+}
+
+.blog-header a {
+   color: var(--lblue);
 }
 
 .blog-header p {
