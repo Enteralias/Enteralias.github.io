@@ -28,6 +28,7 @@
     .Retour {
         position: absolute;
         right: 0;
+        padding-right: 2rem;
     }
 
     #retour {
