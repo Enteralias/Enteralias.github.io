@@ -30,6 +30,10 @@
         right: 0;
     }
 
+    #retour {
+    color: var(--lblue);
+}
+
     .Titre {
         display: none;
     }
