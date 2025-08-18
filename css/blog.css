@@ -1,9 +1,9 @@
 /* Blog Page Styles */
 
 .blog-header {
-    background: var(--dblue);
+    background: linear-gradient(135deg, #667eea 0%, var(--grey) 100%);
     color: var(--lblue);
-    padding: 8px 0;
+    padding: 6px 0;
     text-align: center;
 }
 
@@ -11,10 +11,6 @@
     font-size: 3rem;
     margin-bottom: 10px;
     font-weight: 700;
-}
-
-.blog-header a {
-   color: var(--lblue);
 }
 
 .blog-header p {
@@ -26,7 +22,7 @@
 
 /* Filtres */
 .blog-filters {
-    background: white;
+    background: var(--dblue);
     padding: 30px 0;
     border-bottom: 1px solid #eee;
     position: sticky;
@@ -103,6 +99,7 @@
 .blog-main {
     padding: 60px 0;
     min-height: 50vh;
+    background-color: var(--bg);
 }
 
 .blog-grid {
