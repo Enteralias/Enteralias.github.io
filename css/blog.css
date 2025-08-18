@@ -7,6 +7,10 @@
     text-align: center;
 }
 
+#retour {
+    color: var(--bg);
+}
+
 .blog-header h1 {
     font-size: 3rem;
     margin-bottom: 10px;
@@ -21,6 +25,12 @@
 }
 
 @media screen and (max-width:749px) {
+    .Retour {
+        position: absolute;
+        right: 0;
+        color:
+    }
+
     .Titre {
         display: none;
     }
