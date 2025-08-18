@@ -2,7 +2,7 @@
 
 .blog-header {
     background: linear-gradient(135deg, #667eea 0%, var(--grey) 100%);
-    color: var(--lblue);
+    color: var(--color-body);
     padding: 6px 0;
     text-align: center;
 }
