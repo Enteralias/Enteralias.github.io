@@ -320,6 +320,11 @@ section {
   margin-bottom: 30px;
 }
 
+.articles-preview {
+  padding-left: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
 .blog-article {
     background: transparent;
     border: 1px solid var(--blue);
