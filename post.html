@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Poster un article</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 2em; }
+    input, textarea { display: block; margin: 0.5em 0; width: 100%; max-width: 500px; padding: 8px; }
+    button { padding: 10px 15px; cursor: pointer; margin-top: 10px; }
+    .hidden { display: none; }
+    .actions { margin-top: 1em; }
+  </style>
+</head>
+<body>
+  <h1>Publier un nouvel article</h1>
+
+  <form id="login-form" class="hidden">
+    <input type="password" id="password" placeholder="Mot de passe admin" required>
+    <button type="submit">Se connecter</button>
+  </form>
+
+  <form id="article-form" class="hidden">
+    <input type="text" id="title" placeholder="Titre" required>
+    <input type="text" id="slug" placeholder="Slug (ex: mon-article)" required>
+    <textarea id="content" placeholder="Contenu" required></textarea>
+    <input type="text" id="tags" placeholder="Tags (séparés par virgule)">
+    <div class="actions">
+      <button type="submit">Publier</button>
+      <button type="button" id="logout-btn">Déconnexion</button>
+    </div>
+  </form>
+
+  <script>
+    const loginForm = document.getElementById("login-form");
+    const articleForm = document.getElementById("article-form");
+    const logoutBtn = document.getElementById("logout-btn");
+
+    // Vérifie si un mot de passe est déjà en sessionStorage
+    let savedPass = sessionStorage.getItem("blog_admin_pass");
+    if (savedPass) {
+      articleForm.classList.remove("hidden");
+    } else {
+      loginForm.classList.remove("hidden");
+    }
+
+    // Gestion du login
+    loginForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const pass = document.getElementById("password").value;
+      sessionStorage.setItem("blog_admin_pass", pass);
+      loginForm.classList.add("hidden");
+      articleForm.classList.remove("hidden");
+    });
+
+    // Gestion de la publication
+    articleForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const article = {
+        password: sessionStorage.getItem("blog_admin_pass"),
+        title: document.getElementById("title").value,
+        slug: document.getElementById("slug").value,
+        content: document.getElementById("content").value,
+        tags: document.getElementById("tags").value.split(",").map(t => t.trim()),
+        date: new Date().toISOString().split("T")[0]
+      };
+
+      const response = await fetch("/api/addArticle", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(article)
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        alert("✅ Article publié !");
+        articleForm.reset();
+      } else {
+        alert("❌ Erreur: " + data.error);
+        if (response.status === 401) {
+          // Si mot de passe invalide → reset
+          sessionStorage.removeItem("blog_admin_pass");
+          loginForm.classList.remove("hidden");
+          articleForm.classList.add("hidden");
+        }
+      }
+    });
+
+    // Déconnexion
+    logoutBtn.addEventListener("click", () => {
+      sessionStorage.removeItem("blog_admin_pass");
+      articleForm.classList.add("hidden");
+      loginForm.classList.remove("hidden");
+    });
+  </script>
+</body>
+</html>
