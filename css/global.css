@@ -320,15 +320,12 @@ section {
   margin-bottom: 30px;
 }
 
-.articles-preview {
-  padding-left: 0.5rem;
-  padding-bottom: 0.5rem;
-}
-
 .blog-article {
     background: transparent;
     border: 1px solid var(--blue);
     color: var(--light);
+    padding-left: 2rem;
+    padding-bottom: 2rem;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0,0,0,0.3);
 }
