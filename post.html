@@ -67,7 +67,7 @@
 
       console.log("🔑 password envoyé:", sessionStorage.getItem("blog_admin_pass"));
 
-      const response = await fetch("/api/addArticle", {
+      const response = await fetch("https://bblog-psi.vercel.app/api/addArticle", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(article)
