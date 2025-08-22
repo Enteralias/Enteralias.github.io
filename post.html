@@ -65,13 +65,18 @@
         date: new Date().toISOString().split("T")[0]
       };
 
+      console.log("🔑 password envoyé:", sessionStorage.getItem("blog_admin_pass"));
+
       const response = await fetch("/api/addArticle", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(article)
       });
 
+      console.log("📡 Réponse brute:", response);
+
       const data = await response.json();
+      console.log("📡 Data JSON:", data);
       if (data.success) {
         alert("✅ Article publié !");
         articleForm.reset();
