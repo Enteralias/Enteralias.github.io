@@ -225,7 +225,10 @@ function displayArticles(articles, container) {
       <div class="article-summary">
         ${sanitizeHTML(article.summary || article.content.substring(0, 150) + '...')}
       </div>
-      <a href="#" class="article-link" data-slug="${sanitizeHTML(article.slug)}">
+      <a class="article-link"
+        href="blog.html?slug=${encodeURIComponent(article.slug)}"
+        target="_blank"
+        rel="noopener">
         Lire la suite →
       </a>
     </article>
@@ -237,30 +240,6 @@ function displayArticles(articles, container) {
   addArticleEventListeners();
 }
 
-// Gestion sécurisée des clics sur les articles
-function addArticleEventListeners() {
-  document.querySelectorAll('.article-link').forEach(link => {
-    link.addEventListener('click', function(e) {
-      e.preventDefault();
-      const slug = this.dataset.slug;
-      
-      // Validation du slug
-      if (slug && /^[a-zA-Z0-9-_]+$/.test(slug)) {
-        openArticleModal(slug);
-      } else {
-        console.error('Slug invalide:', slug);
-      }
-    });
-  });
-}
-
-// Fonction pour ouvrir l'article complet (modal ou page)
-function openArticleModal(slug) {
-  // À implémenter : affichage de l'article complet
-  console.log('Ouverture article:', slug);
-  // TODO: Modal avec contenu complet sécurisé
-}
-
 document.addEventListener('DOMContentLoaded', function() {
   if (document.getElementById('articles-preview')) {
     loadBlogArticles();
@@ -268,18 +247,3 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('Container articles-preview non trouvé !');
   }
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,191 +1,181 @@
-/* Blog.js – dédié à blog.html */
+/* blog.js */
 
-// Configuration
+// Config API
 const BLOG_CONFIG = {
   API_URL: 'https://bblog-psi.vercel.app/api/articles',
   TIMEOUT: 10000,
-  PER_PAGE: 5 // nombre d’articles par page
+  PER_PAGE: 6
 };
 
-// État global
+// Sélecteurs
+const container = document.getElementById('blog-articles');
+const pagination = document.getElementById('pagination');
+const pageInfo = document.getElementById('page-info');
+const prevBtn = document.getElementById('prev-btn');
+const nextBtn = document.getElementById('next-btn');
+const searchInput = document.getElementById('search-input');
+const searchBtn = document.getElementById('search-btn');
+const tagButtons = document.querySelectorAll('.tag-filter');
+
 let allArticles = [];
 let filteredArticles = [];
 let currentPage = 1;
+let currentTag = "all";
+let currentSearch = "";
 
-// Sanitize
+// --- Utils ---
 function sanitizeHTML(html) {
   const div = document.createElement('div');
   div.textContent = html;
   return div.innerHTML;
 }
 
-// Validation
-function validateArticle(article) {
-  return article &&
-         typeof article.title === 'string' &&
-         typeof article.slug === 'string' &&
-         typeof article.content === 'string' &&
-         article.title.length > 0 &&
-         article.slug.length > 0;
+function getSlugFromURL() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get('slug');
 }
 
-// Charger tous les articles
-async function loadAllArticles() {
-  const container = document.getElementById('blog-articles');
-
+// --- Fetch Articles ---
+async function fetchArticles() {
   try {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), BLOG_CONFIG.TIMEOUT);
 
     const response = await fetch(BLOG_CONFIG.API_URL, {
-      method: 'GET',
-      headers: { 'Accept': 'application/json' },
+      headers: { Accept: 'application/json' },
       signal: controller.signal
     });
 
     clearTimeout(timeoutId);
-
-    if (!response.ok) throw new Error(`Erreur serveur (${response.status})`);
-
-    const articles = await response.json();
-    if (!Array.isArray(articles)) throw new Error("Format invalide");
-
-    allArticles = articles.filter(validateArticle);
-    filteredArticles = [...allArticles];
-
-    if (filteredArticles.length === 0) {
-      container.innerHTML = '<p class="no-articles">Aucun article disponible.</p>';
-      return;
-    }
-
-    renderPage(1);
-
+    if (!response.ok) throw new Error(`Erreur API ${response.status}`);
+    return await response.json();
   } catch (err) {
-    console.error("Erreur blog:", err.message);
-    container.innerHTML = `
-      <div class="error-message">
-        <p>Impossible de charger les articles.</p>
-        <button onclick="loadAllArticles()" class="retry-btn">Réessayer</button>
-      </div>
-    `;
+    console.error('Erreur de chargement:', err);
+    container.innerHTML = `<p class="error">Impossible de charger les articles.</p>`;
+    return [];
   }
 }
 
-// Rendu paginé
-function renderPage(page) {
-  const container = document.getElementById('blog-articles');
-  const pagination = document.getElementById('pagination');
-  currentPage = page;
+// --- Filtrage ---
+function applyFilters() {
+  filteredArticles = allArticles.filter(article => {
+    const matchesTag =
+      currentTag === "all" ||
+      (article.tags && article.tags.includes(currentTag));
+
+    const matchesSearch =
+      currentSearch === "" ||
+      (article.title && article.title.toLowerCase().includes(currentSearch)) ||
+      (article.content && article.content.toLowerCase().includes(currentSearch));
+
+    return matchesTag && matchesSearch;
+  });
+
+  currentPage = 1;
+  renderArticles(filteredArticles, currentPage);
+}
+
+// --- Rendering Liste ---
+function renderArticles(articles, page = 1) {
+  container.innerHTML = '';
 
   const start = (page - 1) * BLOG_CONFIG.PER_PAGE;
-  const end = start + BLOG_CONFIG.PER_PAGE;
-  const pageArticles = filteredArticles.slice(start, end);
+  const pageArticles = articles.slice(start, start + BLOG_CONFIG.PER_PAGE);
 
-  const html = pageArticles.map(article => `
-    <article class="blog-article">
-      <h3 class="article-title">${sanitizeHTML(article.title)}</h3>
-      <div class="article-meta">
-        <span class="article-date">${sanitizeHTML(article.date || '')}</span>
-      </div>
-      <div class="article-summary">
-        ${sanitizeHTML(article.summary || article.content.substring(0, 200) + '...')}
-      </div>
-      <a href="#" class="article-link" data-slug="${sanitizeHTML(article.slug)}">Lire la suite →</a>
-    </article>
-  `).join('');
+  if (pageArticles.length === 0) {
+    container.innerHTML = `<p class="no-articles">Aucun article disponible.</p>`;
+    pagination.style.display = 'none';
+    return;
+  }
 
-  container.innerHTML = html;
-  addArticleEventListeners();
-
-  // pagination
-  const totalPages = Math.ceil(filteredArticles.length / BLOG_CONFIG.PER_PAGE);
-  pagination.style.display = totalPages > 1 ? "flex" : "none";
-  document.getElementById('page-info').textContent = `Page ${page} sur ${totalPages}`;
-  document.getElementById('prev-btn').disabled = page <= 1;
-  document.getElementById('next-btn').disabled = page >= totalPages;
-}
-
-// Navigation pagination
-document.getElementById('prev-btn').addEventListener('click', () => {
-  if (currentPage > 1) renderPage(currentPage - 1);
-});
-document.getElementById('next-btn').addEventListener('click', () => {
-  const totalPages = Math.ceil(filteredArticles.length / BLOG_CONFIG.PER_PAGE);
-  if (currentPage < totalPages) renderPage(currentPage + 1);
-});
-
-// Recherche
-document.getElementById('search-btn').addEventListener('click', applyFilters);
-document.getElementById('search-input').addEventListener('keyup', (e) => {
-  if (e.key === "Enter") applyFilters();
-});
-
-// Filtres par tags
-document.querySelectorAll('.tag-filter').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.tag-filter').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    applyFilters();
-  });
-});
-
-// Appliquer recherche + tag
-function applyFilters() {
-  const searchText = document.getElementById('search-input').value.toLowerCase();
-  const activeTag = document.querySelector('.tag-filter.active').dataset.tag;
-
-  filteredArticles = allArticles.filter(article => {
-    const matchesSearch = article.title.toLowerCase().includes(searchText) ||
-                          (article.content && article.content.toLowerCase().includes(searchText));
-    const matchesTag = (activeTag === "all") || 
-                       (article.tags && article.tags.includes(activeTag));
-    return matchesSearch && matchesTag;
-  });
-
-  renderPage(1);
-}
-
-// Liens "Lire la suite"
-function addArticleEventListeners() {
-  document.querySelectorAll('.article-link').forEach(link => {
-    link.addEventListener('click', function(e) {
-      e.preventDefault();
-      const slug = this.dataset.slug;
-      if (slug && /^[a-zA-Z0-9-_]+$/.test(slug)) openArticleModal(slug);
-    });
-  });
-}
-
-// Modal article complet
-async function openArticleModal(slug) {
-  const modal = document.getElementById('article-modal');
-  const modalContent = document.getElementById('modal-article-content');
-  const closeBtn = modal.querySelector('.close');
-
-  modal.style.display = "block";
-  modalContent.innerHTML = '<div class="loading">Chargement...</div>';
-
-  try {
-    const response = await fetch(`${BLOG_CONFIG.API_URL}/${slug}`);
-    if (!response.ok) throw new Error("Erreur serveur");
-    const article = await response.json();
-
-    modalContent.innerHTML = `
-      <h2>${sanitizeHTML(article.title)}</h2>
-      <div class="article-date">${sanitizeHTML(article.date || '')}</div>
-      <div class="article-content">${sanitizeHTML(article.content)}</div>
+  pageArticles.forEach(article => {
+    const articleEl = document.createElement('article');
+    articleEl.className = 'blog-card';
+    articleEl.innerHTML = `
+      <h3>${sanitizeHTML(article.title)}</h3>
+      <div class="meta">${sanitizeHTML(article.date || '')}</div>
+      <p>${sanitizeHTML(article.summary || article.content.substring(0, 200) + '...')}</p>
+      <a href="blog.html?slug=${encodeURIComponent(article.slug)}" class="btn-read">Lire la suite →</a>
     `;
-  } catch (err) {
-    modalContent.innerHTML = `<p class="error-message">Impossible de charger l'article.</p>`;
-  }
+    container.appendChild(articleEl);
+  });
 
-  closeBtn.onclick = () => modal.style.display = "none";
-  window.onclick = (e) => { if (e.target == modal) modal.style.display = "none"; };
+  // Pagination
+  const totalPages = Math.ceil(articles.length / BLOG_CONFIG.PER_PAGE);
+  if (totalPages > 1) {
+    pagination.style.display = 'flex';
+    pageInfo.textContent = `Page ${page} sur ${totalPages}`;
+    prevBtn.disabled = page === 1;
+    nextBtn.disabled = page === totalPages;
+  } else {
+    pagination.style.display = 'none';
+  }
 }
 
-// Init
-document.addEventListener('DOMContentLoaded', () => {
-  if (document.getElementById('blog-articles')) {
-    loadAllArticles();
+// --- Rendering Article unique ---
+function renderSingleArticle(article) {
+  container.innerHTML = `
+    <article class="blog-full">
+      <h2>${sanitizeHTML(article.title)}</h2>
+      <div class="meta">${sanitizeHTML(article.date || '')}</div>
+      <div class="content">${article.content}</div>
+      <p><a href="blog.html" class="back-link">← Retour au blog</a></p>
+    </article>
+  `;
+  pagination.style.display = 'none';
+}
+
+// --- Init ---
+(async function initBlog() {
+  allArticles = await fetchArticles();
+
+  const slug = getSlugFromURL();
+  if (slug) {
+    const article = allArticles.find(a => a.slug === slug);
+    if (article) {
+      renderSingleArticle(article);
+    } else {
+      container.innerHTML = `<p class="error">Article introuvable.</p>`;
+    }
+  } else {
+    // Mode liste
+    applyFilters();
+
+    // --- Events ---
+    prevBtn.addEventListener('click', () => {
+      if (currentPage > 1) {
+        currentPage--;
+        renderArticles(filteredArticles, currentPage);
+      }
+    });
+
+    nextBtn.addEventListener('click', () => {
+      const totalPages = Math.ceil(filteredArticles.length / BLOG_CONFIG.PER_PAGE);
+      if (currentPage < totalPages) {
+        currentPage++;
+        renderArticles(filteredArticles, currentPage);
+      }
+    });
+
+    searchBtn.addEventListener('click', () => {
+      currentSearch = searchInput.value.toLowerCase();
+      applyFilters();
+    });
+
+    searchInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        currentSearch = searchInput.value.toLowerCase();
+        applyFilters();
+      }
+    });
+
+    tagButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        tagButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentTag = btn.dataset.tag;
+        applyFilters();
+      });
+    });
   }
-});
+})();
