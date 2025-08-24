@@ -165,19 +165,18 @@ async function openArticleModal(slug) {
   modal.style.display = "block";
   modalContent.innerHTML = '<div class="loading">Chargement...</div>';
 
-  try {
-    const response = await fetch(`${BLOG_CONFIG.API_URL}/${slug}`);
-    if (!response.ok) throw new Error("Erreur serveur");
-    const article = await response.json();
-
-    modalContent.innerHTML = `
-      <h2>${sanitizeHTML(article.title)}</h2>
-      <div class="article-date">${sanitizeHTML(article.date || '')}</div>
-      <div class="article-content">${sanitizeHTML(article.content)}</div>
-    `;
-  } catch (err) {
-    modalContent.innerHTML = `<p class="error-message">Impossible de charger l'article.</p>`;
+  // 👉 Remplace ici le fetch par la recherche locale
+  const article = allArticles.find(a => a.slug === slug);
+  if (!article) {
+    modalContent.innerHTML = `<p class="error-message">Article introuvable.</p>`;
+    return;
   }
+
+  modalContent.innerHTML = `
+    <h2>${sanitizeHTML(article.title)}</h2>
+    <div class="article-date">${sanitizeHTML(article.date || '')}</div>
+    <div class="article-content">${sanitizeHTML(article.content)}</div>
+  `;
 
   closeBtn.onclick = () => modal.style.display = "none";
   window.onclick = (e) => { if (e.target == modal) modal.style.display = "none"; };
