@@ -1,10 +1,11 @@
-/* blog.js - Version corrigée et unifiée */
+/* blog.js - Version corrigée selon vos spécifications */
 
 // Config API
 const BLOG_CONFIG = {
   API_URL: 'https://bblog-psi.vercel.app/api/articles',
   TIMEOUT: 10000,
-  PER_PAGE: 6
+  PER_PAGE: 12, // Plus d'articles par page
+  PREVIEW_COUNT: 3 // Pour index.html
 };
 
 // Variables globales
@@ -41,6 +42,8 @@ async function fetchArticles() {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), BLOG_CONFIG.TIMEOUT);
 
+    console.log('Chargement des articles depuis:', BLOG_CONFIG.API_URL);
+
     const response = await fetch(BLOG_CONFIG.API_URL, {
       method: 'GET',
       headers: { 
@@ -57,13 +60,17 @@ async function fetchArticles() {
     }
     
     const articles = await response.json();
+    console.log('Articles reçus:', articles.length);
     
     // Validation des données
     if (!Array.isArray(articles)) {
       throw new Error('Format de données invalide');
     }
     
-    return articles.filter(validateArticle);
+    const validArticles = articles.filter(validateArticle);
+    console.log('Articles valides:', validArticles.length);
+    
+    return validArticles;
     
   } catch (err) {
     console.error('Erreur de chargement:', err);
@@ -82,6 +89,7 @@ function showErrorMessage(message) {
   const errorHTML = `
     <div class="error-message">
       <p>Les articles ne sont pas disponibles pour le moment.</p>
+      <p class="error-detail">${message}</p>
       <button onclick="window.location.reload()" class="retry-btn">Réessayer</button>
     </div>
   `;
@@ -93,11 +101,13 @@ function showErrorMessage(message) {
   });
 }
 
-// --- Filtrage ---
+// --- Filtrage (sur TOUS les articles) ---
 function applyFilters() {
+  console.log('Application des filtres - Tag:', currentTag, 'Recherche:', currentSearch);
+  
   filteredArticles = allArticles.filter(article => {
     const matchesTag = currentTag === "all" || 
-      (article.tags && article.tags.includes(currentTag));
+      (article.tags && article.tags.some(tag => tag.includes(currentTag)));
 
     const searchTerm = currentSearch.toLowerCase();
     const matchesSearch = currentSearch === "" || 
@@ -108,11 +118,12 @@ function applyFilters() {
     return matchesTag && matchesSearch;
   });
 
+  console.log('Articles filtrés:', filteredArticles.length);
   currentPage = 1;
   renderArticles(filteredArticles, currentPage);
 }
 
-// --- Rendering Liste complète (blog.html) ---
+// --- Rendering Liste complète avec accordéon (blog.html) ---
 function renderArticles(articles, page = 1) {
   const container = document.getElementById('blog-articles');
   if (!container) return;
@@ -123,7 +134,7 @@ function renderArticles(articles, page = 1) {
   const pageArticles = articles.slice(start, start + BLOG_CONFIG.PER_PAGE);
 
   if (pageArticles.length === 0) {
-    container.innerHTML = `<p class="no-articles">Aucun article disponible.</p>`;
+    container.innerHTML = `<p class="no-articles">Aucun article trouvé pour cette recherche.</p>`;
     hidePagination();
     return;
   }
@@ -131,21 +142,64 @@ function renderArticles(articles, page = 1) {
   pageArticles.forEach(article => {
     const articleEl = document.createElement('article');
     articleEl.className = 'blog-card';
+    articleEl.dataset.slug = article.slug;
     
     const summary = article.summary || 
       (article.content ? article.content.substring(0, 200) + '...' : '');
     
     articleEl.innerHTML = `
-      <h3>${sanitizeHTML(article.title)}</h3>
-      <div class="meta">${sanitizeHTML(article.date || '')}</div>
-      <p>${sanitizeHTML(summary)}</p>
-      <a href="blog.html?slug=${encodeURIComponent(article.slug)}" class="btn-read">Lire la suite →</a>
+      <div class="article-header" onclick="toggleArticle('${article.slug}')">
+        <h3>${sanitizeHTML(article.title)}</h3>
+        <div class="meta">${sanitizeHTML(article.date || '')}</div>
+        <p class="summary">${sanitizeHTML(summary)}</p>
+        <span class="toggle-icon">+</span>
+      </div>
+      <div class="article-content" id="content-${article.slug}" style="display: none;">
+        <div class="full-content">${article.content || ''}</div>
+        ${article.tags && article.tags.length > 0 ? 
+          `<div class="tags">Tags: ${article.tags.map(tag => `<span class="tag">${tag}</span>`).join(' ')}</div>` 
+          : ''}
+      </div>
     `;
     container.appendChild(articleEl);
   });
 
   updatePagination(articles, page);
 }
+
+// --- Fonction accordéon ---
+function toggleArticle(slug) {
+  const content = document.getElementById(`content-${slug}`);
+  const card = document.querySelector(`[data-slug="${slug}"]`);
+  const icon = card.querySelector('.toggle-icon');
+  
+  if (!content) return;
+  
+  // Fermer tous les autres articles
+  document.querySelectorAll('.article-content').forEach(otherContent => {
+    if (otherContent !== content && otherContent.style.display === 'block') {
+      otherContent.style.display = 'none';
+      const otherCard = otherContent.closest('.blog-card');
+      const otherIcon = otherCard.querySelector('.toggle-icon');
+      if (otherIcon) otherIcon.textContent = '+';
+      otherCard.classList.remove('expanded');
+    }
+  });
+  
+  // Toggle l'article actuel
+  if (content.style.display === 'none') {
+    content.style.display = 'block';
+    icon.textContent = '−';
+    card.classList.add('expanded');
+  } else {
+    content.style.display = 'none';
+    icon.textContent = '+';
+    card.classList.remove('expanded');
+  }
+}
+
+// Rendre la fonction globale pour onclick
+window.toggleArticle = toggleArticle;
 
 // --- Pagination ---
 function updatePagination(articles, page) {
@@ -160,7 +214,7 @@ function updatePagination(articles, page) {
   
   if (totalPages > 1) {
     pagination.style.display = 'flex';
-    if (pageInfo) pageInfo.textContent = `Page ${page} sur ${totalPages}`;
+    if (pageInfo) pageInfo.textContent = `Page ${page} sur ${totalPages} (${articles.length} articles)`;
     if (prevBtn) prevBtn.disabled = page === 1;
     if (nextBtn) nextBtn.disabled = page === totalPages;
   } else {
@@ -173,7 +227,7 @@ function hidePagination() {
   if (pagination) pagination.style.display = 'none';
 }
 
-// --- Rendering Article unique ---
+// --- Rendering Article unique (si slug dans URL) ---
 function renderSingleArticle(article) {
   const container = document.getElementById('blog-articles');
   if (!container) return;
@@ -183,6 +237,9 @@ function renderSingleArticle(article) {
       <h2>${sanitizeHTML(article.title)}</h2>
       <div class="meta">${sanitizeHTML(article.date || '')}</div>
       <div class="content">${article.content || ''}</div>
+      ${article.tags && article.tags.length > 0 ? 
+        `<div class="tags">Tags: ${article.tags.map(tag => `<span class="tag">${tag}</span>`).join(' ')}</div>` 
+        : ''}
       <p><a href="blog.html" class="back-link">← Retour au blog</a></p>
     </article>
   `;
@@ -190,12 +247,17 @@ function renderSingleArticle(article) {
   hidePagination();
 }
 
-// --- Aperçu articles (index.html) ---
+// --- Aperçu articles pour index.html ---
 function renderArticlePreview(articles) {
   const container = document.getElementById('articles-preview');
-  if (!container) return;
+  if (!container) {
+    console.log('Container articles-preview non trouvé');
+    return;
+  }
   
-  const previewArticles = articles.slice(0, 3);
+  console.log('Rendu des articles de prévisualisation:', articles.length);
+  
+  const previewArticles = articles.slice(0, BLOG_CONFIG.PREVIEW_COUNT);
   
   if (previewArticles.length === 0) {
     container.innerHTML = '<p class="no-articles">Aucun article disponible pour le moment.</p>';
@@ -223,6 +285,7 @@ function renderArticlePreview(articles) {
   }).join('');
   
   container.innerHTML = articlesHTML;
+  console.log('Articles de prévisualisation affichés');
 }
 
 // --- Event Listeners ---
@@ -236,6 +299,7 @@ function setupEventListeners() {
       if (currentPage > 1) {
         currentPage--;
         renderArticles(filteredArticles, currentPage);
+        window.scrollTo(0, 0);
       }
     });
   }
@@ -246,6 +310,7 @@ function setupEventListeners() {
       if (currentPage < totalPages) {
         currentPage++;
         renderArticles(filteredArticles, currentPage);
+        window.scrollTo(0, 0);
       }
     });
   }
@@ -256,7 +321,8 @@ function setupEventListeners() {
   
   if (searchBtn) {
     searchBtn.addEventListener('click', () => {
-      currentSearch = searchInput ? searchInput.value.toLowerCase() : '';
+      currentSearch = searchInput ? searchInput.value.toLowerCase().trim() : '';
+      console.log('Recherche:', currentSearch);
       applyFilters();
     });
   }
@@ -264,7 +330,8 @@ function setupEventListeners() {
   if (searchInput) {
     searchInput.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
-        currentSearch = searchInput.value.toLowerCase();
+        currentSearch = searchInput.value.toLowerCase().trim();
+        console.log('Recherche (Enter):', currentSearch);
         applyFilters();
       }
     });
@@ -277,6 +344,7 @@ function setupEventListeners() {
       tagButtons.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       currentTag = btn.dataset.tag;
+      console.log('Tag sélectionné:', currentTag);
       applyFilters();
     });
   });
@@ -284,16 +352,22 @@ function setupEventListeners() {
 
 // --- Initialisation ---
 async function initBlog() {
+  console.log('Initialisation du blog...');
+  
   // Chargement des articles
   allArticles = await fetchArticles();
   
   if (allArticles.length === 0) {
-    return; // L'erreur est déjà affichée par showErrorMessage
+    console.log('Aucun article chargé');
+    return;
   }
+
+  console.log('Articles chargés:', allArticles.length);
 
   const slug = getSlugFromURL();
   
   if (slug) {
+    console.log('Mode article unique:', slug);
     // Mode article unique (blog.html avec ?slug=...)
     const article = allArticles.find(a => a.slug === slug);
     if (article) {
@@ -301,7 +375,7 @@ async function initBlog() {
     } else {
       const container = document.getElementById('blog-articles');
       if (container) {
-        container.innerHTML = `<p class="error">Article introuvable.</p>`;
+        container.innerHTML = `<p class="error">Article "${slug}" introuvable.</p>`;
       }
     }
   } else {
@@ -310,16 +384,23 @@ async function initBlog() {
     const previewContainer = document.getElementById('articles-preview');
     
     if (blogContainer) {
+      console.log('Mode liste complète (blog.html)');
       // Mode liste complète (blog.html)
       filteredArticles = [...allArticles];
       renderArticles(filteredArticles, 1);
       setupEventListeners();
     } else if (previewContainer) {
+      console.log('Mode aperçu (index.html)');
       // Mode aperçu (index.html)
       renderArticlePreview(allArticles);
+    } else {
+      console.log('Aucun container trouvé');
     }
   }
 }
 
 // --- Démarrage ---
-document.addEventListener('DOMContentLoaded', initBlog);
+document.addEventListener('DOMContentLoaded', () => {
+  console.log('DOM chargé, initialisation...');
+  initBlog();
+});
