@@ -284,7 +284,7 @@ function renderArticlePreview(articles) {
         <div class="article-summary">
           ${sanitizeHTML(summary)}
         </div>
-        <a class="article-link" href="blog.html?slug=${encodeURIComponent(article.slug)}">
+        <a class="article-link" href="blog.html?slug=${encodeURIComponent(article.slug)}" target="_blank">
           Lire la suite →
         </a>
       </article>
@@ -395,6 +395,12 @@ async function initBlog() {
       // Mode liste complète (blog.html)
       filteredArticles = [...allArticles];
       renderArticles(filteredArticles, 1);
+        // Auto-ouvrir l'article si slug dans URL
+        if (slug) {
+          setTimeout(() => {
+            toggleArticle(slug);
+          }, 100);
+        }
       setupEventListeners();
     } else if (previewContainer) {
       console.log('Mode aperçu (index.html)');
