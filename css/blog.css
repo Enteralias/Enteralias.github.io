@@ -63,7 +63,6 @@
 .blog-filters {
     background: var(--dblue);
     padding: 30px 0;
-    border-bottom: 1px solid #eee;
 }
 
 .filters-row {
@@ -161,6 +160,11 @@
 
 .article-content {
     padding: 25px;
+    display: none;
+}
+
+.article-content.show {
+  display: block;
 }
 
 .article-title {

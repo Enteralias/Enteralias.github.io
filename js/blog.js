@@ -196,6 +196,18 @@ function toggleArticle(slug) {
   }
 }
 
+function initArticlesToggle() {
+  const buttons = document.querySelectorAll('.toggle-article');
+
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const slug = btn.dataset.slug;
+      const content = document.querySelector(`#article-${slug} .article-content`);
+      content.classList.toggle('show');
+    });
+  });
+}
+
 // Rendre la fonction globale pour onclick
 window.toggleArticle = toggleArticle;
 
@@ -243,6 +255,19 @@ function renderSingleArticle(article) {
   `;
   
   hidePagination();
+}
+
+function openArticleFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const slug = params.get('slug');
+  if (slug) {
+    const content = document.querySelector(`#article-${slug} .article-content`);
+    if (content) {
+      content.classList.add('show');
+      // on peut aussi scroller jusqu’à l’article
+      content.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
 }
 
 // --- Aperçu articles pour index.html ---
@@ -414,6 +439,8 @@ async function initBlog() {
 
 // --- Démarrage ---
 document.addEventListener('DOMContentLoaded', () => {
+  initArticlesToggle();
+  openArticleFromUrl();
   console.log('DOM chargé, initialisation...');
   initBlog();
 });
