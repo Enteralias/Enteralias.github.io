@@ -144,18 +144,25 @@ function renderArticles(articles, page = 1) {
     articleEl.className = 'blog-card';
     articleEl.dataset.slug = article.slug;
     
-    const summary = article.summary || 
-      (article.content ? article.content.substring(0, 200) + '...' : '');
+    // Debug pour voir le contenu
+    console.log('Article:', article.title, 'Summary:', article.summary, 'Content length:', article.content?.length);
+    
+    let summary = '';
+    if (article.summary && article.summary.trim() && article.summary !== 'empty') {
+      summary = article.summary;
+    } else if (article.content && article.content.trim() && article.content !== 'empty') {
+      summary = article.content.substring(0, 200) + '...';
+    } else {
+      summary = 'Résumé non disponible';
+    }
     
     articleEl.innerHTML = `
-      <div class="article-header" onclick="toggleArticle('${article.slug}')">
-        <h3>${sanitizeHTML(article.title)}</h3>
-        <div class="meta">${sanitizeHTML(article.date || '')}</div>
-        <p class="summary">${sanitizeHTML(summary)}</p>
-        <span class="toggle-icon">+</span>
-      </div>
+      <h3>${sanitizeHTML(article.title)}</h3>
+      <div class="meta">${sanitizeHTML(article.date || '')}</div>
+      <p>${sanitizeHTML(summary)}</p>
+      <a href="#" class="btn-read" onclick="toggleArticle('${article.slug}'); return false;">Lire la suite →</a>
       <div class="article-content" id="content-${article.slug}" style="display: none;">
-        <div class="full-content">${article.content || ''}</div>
+        <div class="full-content">${article.content || 'Contenu non disponible'}</div>
         ${article.tags && article.tags.length > 0 ? 
           `<div class="tags">Tags: ${article.tags.map(tag => `<span class="tag">${tag}</span>`).join(' ')}</div>` 
           : ''}
@@ -167,34 +174,25 @@ function renderArticles(articles, page = 1) {
   updatePagination(articles, page);
 }
 
-// --- Fonction accordéon ---
+// --- Fonction accordéon (version simplifiée) ---
 function toggleArticle(slug) {
   const content = document.getElementById(`content-${slug}`);
   const card = document.querySelector(`[data-slug="${slug}"]`);
-  const icon = card.querySelector('.toggle-icon');
   
-  if (!content) return;
+  if (!content || !card) return;
   
   // Fermer tous les autres articles
   document.querySelectorAll('.article-content').forEach(otherContent => {
     if (otherContent !== content && otherContent.style.display === 'block') {
       otherContent.style.display = 'none';
-      const otherCard = otherContent.closest('.blog-card');
-      const otherIcon = otherCard.querySelector('.toggle-icon');
-      if (otherIcon) otherIcon.textContent = '+';
-      otherCard.classList.remove('expanded');
     }
   });
   
   // Toggle l'article actuel
   if (content.style.display === 'none') {
     content.style.display = 'block';
-    icon.textContent = '−';
-    card.classList.add('expanded');
   } else {
     content.style.display = 'none';
-    icon.textContent = '+';
-    card.classList.remove('expanded');
   }
 }
 
@@ -265,8 +263,17 @@ function renderArticlePreview(articles) {
   }
   
   const articlesHTML = previewArticles.map(article => {
-    const summary = article.summary || 
-      (article.content ? article.content.substring(0, 150) + '...' : '');
+    // Debug pour index.html aussi
+    console.log('Preview article:', article.title, 'Summary:', article.summary);
+    
+    let summary = '';
+    if (article.summary && article.summary.trim() && article.summary !== 'empty') {
+      summary = article.summary;
+    } else if (article.content && article.content.trim() && article.content !== 'empty') {
+      summary = article.content.substring(0, 150) + '...';
+    } else {
+      summary = 'Aperçu non disponible';
+    }
       
     return `
       <article class="blog-article">
