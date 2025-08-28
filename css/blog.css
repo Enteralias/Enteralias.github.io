@@ -3,7 +3,7 @@
 .blog-header {
     background: linear-gradient(135deg, #667eea 0%, var(--dblue) 100%);
     color: var(--color-body);
-    padding: 6px 0;
+    padding: 0px 0;
     text-align: center;
 }
 
@@ -353,7 +353,7 @@
 /* CSS pour l'effet accordéon des articles */
 
 .blog-card {
-  background: #fff;
+  background: none;
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0,0,0,0.1);
   margin-bottom: 1rem;
