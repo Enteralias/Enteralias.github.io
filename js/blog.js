@@ -223,8 +223,13 @@ function renderArticles(articles, page = 1) {
         expandBtn.textContent = '−'; // Caractère minus
       // Mettre à jour l'URL avec le slug
         window.history.replaceState({}, document.title, `blog.html?slug=${slug}`);
-      // Scroller vers l'article
-        card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      // Scroller vers l'article en tenant compte du header sticky
+      const headerHeight = document.querySelector('header')?.offsetHeight || 80; // 80px par défaut
+      const cardTop = card.offsetTop - headerHeight - 20; // 20px de marge supplémentaire
+      window.scrollTo({ 
+          top: cardTop, 
+          behavior: 'smooth' 
+      });
     }
 }
 
@@ -236,7 +241,12 @@ function renderArticles(articles, page = 1) {
         toggleArticle(slug);
       // Scroller vers l'article après un délai pour être sûr que l'animation soit terminée
         setTimeout(() => {
-          card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          const headerHeight = document.querySelector('header')?.offsetHeight || 80;
+          const cardTop = card.offsetTop - headerHeight - 20;
+          window.scrollTo({ 
+              top: cardTop, 
+              behavior: 'smooth' 
+          });
         }, 200);
     } else {
       console.warn(`Article avec le slug "${slug}" non trouvé sur cette page`);
