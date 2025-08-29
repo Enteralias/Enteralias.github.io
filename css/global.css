@@ -322,7 +322,6 @@ section {
 
 .blog-article {
     background: transparent;
-    border: 1px solid var(--blue);
     color: var(--light);
     padding-left: 2rem;
     padding-bottom: 2rem;

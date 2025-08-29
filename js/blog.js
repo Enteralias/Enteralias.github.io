@@ -156,57 +156,103 @@ function renderArticles(articles, page = 1) {
       summary = 'Résumé non disponible';
     }
     
-    articleEl.innerHTML = `
+  articleEl.innerHTML = `
+    <div class="article-header">
       <h3>${sanitizeHTML(article.title)}</h3>
-      <div class="meta">${sanitizeHTML(article.date || '')}</div>
+      <button class="btn-expand" onclick="toggleArticle('${article.slug}'); return false;" aria-label="Développer l'article">
+          <span class="expand-icon">+</span>
+      </button>
+    </div>
+    <div class="meta">${sanitizeHTML(article.date || '')}</div>
+    <div class="article-preview">
       <p>${sanitizeHTML(summary)}</p>
-      <a href="#" class="btn-read" onclick="toggleArticle('${article.slug}'); return false;">Lire la suite →</a>
-      <div class="article-content" id="content-${article.slug}" style="display: none;">
-        <div class="full-content">${article.content || 'Contenu non disponible'}</div>
+    </div>
+    <div class="article-content" id="content-${article.slug}" style="display: none;">
+      <div class="full-content">${article.content || 'Contenu non disponible'}</div>
         ${article.tags && article.tags.length > 0 ? 
-          `<div class="tags">Tags: ${article.tags.map(tag => `<span class="tag">${tag}</span>`).join(' ')}</div>` 
-          : ''}
-      </div>
+          `<div class="tags">Tags: ${article.tags.map(tag => `<span class="tag">${tag}</span>`).join(' ')}</div>` : ''
+        }
+    </div>
+`;
     `;
     container.appendChild(articleEl);
   });
 
+    // Vérifier si un article spécifique doit être ouvert (depuis index.html)
+  const slugToOpen = getSlugFromURL();
+  if (slugToOpen) {
+      // Attendre un peu que le DOM soit mis à jour
+      setTimeout(() => {
+        openSpecificArticle(slugToOpen);
+      }, 100);
+  }
   updatePagination(articles, page);
 }
 
 // --- Fonction accordéon (version simplifiée) ---
-function toggleArticle(slug) {
-  const content = document.getElementById(`content-${slug}`);
-  const card = document.querySelector(`[data-slug="${slug}"]`);
-  
-  if (!content || !card) return;
-  
-  // Fermer tous les autres articles
+  function toggleArticle(slug) {
+    const content = document.getElementById(`content-${slug}`);
+    const card = document.querySelector(`[data-slug="${slug}"]`);
+    const expandBtn = card?.querySelector('.btn-expand .expand-icon');
+      
+    if (!content || !card || !expandBtn) return;
+      
+    const isCurrentlyOpen = content.style.display === 'block';
+    
+// Fermer tous les autres articles et remettre leurs boutons à "+"
   document.querySelectorAll('.article-content').forEach(otherContent => {
     if (otherContent !== content && otherContent.style.display === 'block') {
       otherContent.style.display = 'none';
+        const otherSlug = otherContent.id.replace('content-', '');
+        const otherBtn = document.querySelector(`[data-slug="${otherSlug}"] .expand-icon`);
+          if (otherBtn) otherBtn.textContent = '+';
     }
   });
-  
-  // Toggle l'article actuel
-  if (content.style.display === 'none') {
-    content.style.display = 'block';
-  } else {
+    
+// Toggle l'article actuel
+  if (isCurrentlyOpen) {
     content.style.display = 'none';
+    expandBtn.textContent = '+';
+// Remettre l'URL à blog.html sans paramètre
+    if (window.location.search) {
+      window.history.replaceState({}, document.title, 'blog.html');
+    }
+    } else {
+      content.style.display = 'block';
+        expandBtn.textContent = '−'; // Caractère minus
+      // Mettre à jour l'URL avec le slug
+        window.history.replaceState({}, document.title, `blog.html?slug=${slug}`);
+      // Scroller vers l'article
+        card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
+
+// --- Fonction pour ouvrir un article spécifique ---
+  function openSpecificArticle(slug) {
+    const card = document.querySelector(`[data-slug="${slug}"]`);
+    if (card) {
+      // Ouvrir l'article
+        toggleArticle(slug);
+      // Scroller vers l'article après un délai pour être sûr que l'animation soit terminée
+        setTimeout(() => {
+          card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 200);
+    } else {
+      console.warn(`Article avec le slug "${slug}" non trouvé sur cette page`);
+    }
   }
-}
 
-function initArticlesToggle() {
-  const buttons = document.querySelectorAll('.toggle-article');
+  function initArticlesToggle() {
+    const buttons = document.querySelectorAll('.toggle-article');
 
-  buttons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const slug = btn.dataset.slug;
-      const content = document.querySelector(`#article-${slug} .article-content`);
-      content.classList.toggle('show');
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const slug = btn.dataset.slug;
+        const content = document.querySelector(`#article-${slug} .article-content`);
+        content.classList.toggle('show');
+      });
     });
-  });
-}
+  }
 
 // Rendre la fonction globale pour onclick
 window.toggleArticle = toggleArticle;
@@ -309,7 +355,7 @@ function renderArticlePreview(articles) {
         <div class="article-summary">
           ${sanitizeHTML(summary)}
         </div>
-        <a class="article-link" href="blog.html?slug=${encodeURIComponent(article.slug)}" target="_blank">
+        <a class="article-link" href="blog.html?slug=${encodeURIComponent(article.slug)}">
           Lire la suite →
         </a>
       </article>
