@@ -174,11 +174,13 @@ function renderArticles(articles, page = 1) {
         }
     </div>
 `;
-    `;
+
     container.appendChild(articleEl);
   });
 
-    // Vérifier si un article spécifique doit être ouvert (depuis index.html)
+  updatePagination(articles, page);
+
+      // Vérifier si un article spécifique doit être ouvert (depuis index.html)
   const slugToOpen = getSlugFromURL();
   if (slugToOpen) {
       // Attendre un peu que le DOM soit mis à jour
@@ -186,7 +188,6 @@ function renderArticles(articles, page = 1) {
         openSpecificArticle(slugToOpen);
       }, 100);
   }
-  updatePagination(articles, page);
 }
 
 // --- Fonction accordéon (version simplifiée) ---
@@ -242,18 +243,6 @@ function renderArticles(articles, page = 1) {
     }
   }
 
-  function initArticlesToggle() {
-    const buttons = document.querySelectorAll('.toggle-article');
-
-    buttons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const slug = btn.dataset.slug;
-        const content = document.querySelector(`#article-${slug} .article-content`);
-        content.classList.toggle('show');
-      });
-    });
-  }
-
 // Rendre la fonction globale pour onclick
 window.toggleArticle = toggleArticle;
 
@@ -301,19 +290,6 @@ function renderSingleArticle(article) {
   `;
   
   hidePagination();
-}
-
-function openArticleFromUrl() {
-  const params = new URLSearchParams(window.location.search);
-  const slug = params.get('slug');
-  if (slug) {
-    const content = document.querySelector(`#article-${slug} .article-content`);
-    if (content) {
-      content.classList.add('show');
-      // on peut aussi scroller jusqu’à l’article
-      content.scrollIntoView({ behavior: 'smooth' });
-    }
-  }
 }
 
 // --- Aperçu articles pour index.html ---
@@ -444,49 +420,27 @@ async function initBlog() {
 
   const slug = getSlugFromURL();
   
-  if (slug) {
-    console.log('Mode article unique:', slug);
-    // Mode article unique (blog.html avec ?slug=...)
-    const article = allArticles.find(a => a.slug === slug);
-    if (article) {
-      renderSingleArticle(article);
-    } else {
-      const container = document.getElementById('blog-articles');
-      if (container) {
-        container.innerHTML = `<p class="error">Article "${slug}" introuvable.</p>`;
-      }
-    }
-  } else {
     // Déterminer le mode selon la page
-    const blogContainer = document.getElementById('blog-articles');
-    const previewContainer = document.getElementById('articles-preview');
-    
-    if (blogContainer) {
-      console.log('Mode liste complète (blog.html)');
-      // Mode liste complète (blog.html)
-      filteredArticles = [...allArticles];
-      renderArticles(filteredArticles, 1);
-        // Auto-ouvrir l'article si slug dans URL
-        if (slug) {
-          setTimeout(() => {
-            toggleArticle(slug);
-          }, 100);
-        }
-      setupEventListeners();
-    } else if (previewContainer) {
-      console.log('Mode aperçu (index.html)');
-      // Mode aperçu (index.html)
-      renderArticlePreview(allArticles);
-    } else {
-      console.log('Aucun container trouvé');
-    }
+  const blogContainer = document.getElementById('blog-articles');
+  const previewContainer = document.getElementById('articles-preview');
+
+  if (blogContainer) {
+    console.log('Mode liste complète (blog.html)');
+    // Mode liste complète (blog.html)
+    filteredArticles = [...allArticles];
+    renderArticles(filteredArticles, 1);
+    setupEventListeners();
+  } else if (previewContainer) {
+    console.log('Mode aperçu (index.html)');
+    // Mode aperçu (index.html)
+    renderArticlePreview(allArticles);
+  } else {
+    console.log('Aucun container trouvé');
   }
 }
 
 // --- Démarrage ---
-document.addEventListener('DOMContentLoaded', () => {
-  initArticlesToggle();
-  openArticleFromUrl();
-  console.log('DOM chargé, initialisation...');
-  initBlog();
-});
+  document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOM chargé, initialisation...');
+    initBlog();
+  });
