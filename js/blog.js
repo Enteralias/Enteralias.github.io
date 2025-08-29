@@ -200,37 +200,44 @@ function renderArticles(articles, page = 1) {
       
     const isCurrentlyOpen = content.style.display === 'block';
     
-// Fermer tous les autres articles et remettre leurs boutons à "+"
+  // Fermer tous les autres articles et remettre leurs boutons à "+"
   document.querySelectorAll('.article-content').forEach(otherContent => {
     if (otherContent !== content && otherContent.style.display === 'block') {
       otherContent.style.display = 'none';
-        const otherSlug = otherContent.id.replace('content-', '');
-        const otherBtn = document.querySelector(`[data-slug="${otherSlug}"] .expand-icon`);
-          if (otherBtn) otherBtn.textContent = '+';
+      const otherSlug = otherContent.id.replace('content-', '');
+      const otherCard = document.querySelector(`[data-slug="${otherSlug}"]`);
+      const otherBtn = otherCard?.querySelector('.expand-icon');
+      const otherPreview = otherCard?.querySelector('.article-preview');
+      if (otherBtn) otherBtn.textContent = '+';
+      if (otherPreview) otherPreview.style.display = 'block'; // Réafficher l'aperçu des autres
     }
   });
     
-// Toggle l'article actuel
+  // Toggle l'article actuel
+  const preview = card.querySelector('.article-preview');
+
   if (isCurrentlyOpen) {
     content.style.display = 'none';
+    if (preview) preview.style.display = 'block'; // Réafficher l'aperçu
     expandBtn.textContent = '+';
-// Remettre l'URL à blog.html sans paramètre
+    // Remettre l'URL à blog.html sans paramètre
     if (window.location.search) {
-      window.history.replaceState({}, document.title, 'blog.html');
+        window.history.replaceState({}, document.title, 'blog.html');
     }
-    } else {
-      content.style.display = 'block';
-        expandBtn.textContent = '−'; // Caractère minus
-      // Mettre à jour l'URL avec le slug
-        window.history.replaceState({}, document.title, `blog.html?slug=${slug}`);
-      // Scroller vers l'article en tenant compte du header sticky
-      const headerHeight = document.querySelector('header')?.offsetHeight || 80; // 80px par défaut
-      const cardTop = card.offsetTop - headerHeight - 20; // 20px de marge supplémentaire
-      window.scrollTo({ 
-          top: cardTop, 
-          behavior: 'smooth' 
-      });
-    }
+  } else {
+    content.style.display = 'block';
+    if (preview) preview.style.display = 'none'; // Masquer l'aperçu
+    expandBtn.textContent = '−'; // Caractère minus
+    // Mettre à jour l'URL avec le slug
+    window.history.replaceState({}, document.title, `blog.html?slug=${slug}`);
+    // Scroller vers l'article en tenant compte du header sticky
+    const headerHeight = document.querySelector('header')?.offsetHeight || 80;
+    const cardTop = card.offsetTop - headerHeight - 20;
+    window.scrollTo({ 
+        top: cardTop, 
+        behavior: 'smooth' 
+    });
+  }
 }
 
 // --- Fonction pour ouvrir un article spécifique ---
