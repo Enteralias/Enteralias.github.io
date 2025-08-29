@@ -633,7 +633,7 @@
     border-radius: 8px;
     padding: 20px;
     margin-bottom: 20px;
-    background: #fff;
+    background: none;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     transition: box-shadow 0.3s ease;
 }
@@ -706,7 +706,7 @@
 
 .article-preview p {
     margin: 0;
-    color: #555;
+    color: var(--light);
     line-height: 1.6;
 }
 
@@ -719,7 +719,7 @@
 }
 
 .full-content {
-    color: #444;
+    color: var(--light);
     line-height: 1.7;
 }
 
@@ -731,7 +731,7 @@
 .full-content h6 {
     margin-top: 1.5em;
     margin-bottom: 0.5em;
-    color: #333;
+    color: var(--light);
 }
 
 .full-content p {
