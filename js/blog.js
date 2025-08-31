@@ -5,7 +5,10 @@ const BLOG_CONFIG = {
   API_URL: 'https://bblog-psi.vercel.app/api/articles',
   TIMEOUT: 10000,
   PER_PAGE: 12, // Plus d'articles par page
-  PREVIEW_COUNT: 3 // Pour index.html
+  PREVIEW_COUNT: 3, // Pour index.html
+  MAX_ARTICLES: 1000, // Limiter le nombre d'articles
+  MAX_CONTENT_LENGTH: 100000, // Limiter la taille du contenu
+  MAX_SEARCH_LENGTH: 100 // Limiter la recherche
 };
 
 // Variables globales
@@ -18,14 +21,35 @@ let currentSearch = "";
 // --- Utils ---
 function sanitizeHTML(html) {
   if (!html) return '';
+  
+  // Échapper les caractères dangereux
   const div = document.createElement('div');
   div.textContent = html;
-  return div.innerHTML;
+  let safe = div.innerHTML;
+  
+  // Supprimer les caractères de contrôle et scripts potentiels
+  safe = safe.replace(/[\x00-\x1F\x7F]/g, ''); // Caractères de contrôle
+  safe = safe.replace(/javascript:/gi, ''); // URLs javascript
+  safe = safe.replace(/data:/gi, ''); // URLs data
+  safe = safe.replace(/vbscript:/gi, ''); // VBScript
+  
+  return safe;
 }
 
 function getSlugFromURL() {
   const params = new URLSearchParams(window.location.search);
-  return params.get('slug');
+  const slug = params.get('slug');
+  
+  // Validation stricte du slug
+  if (!slug || typeof slug !== 'string') return null;
+  
+  // Nettoyer le slug - ne garder que lettres, chiffres, tirets et underscores
+  const cleanSlug = slug.replace(/[^a-zA-Z0-9-_]/g, '');
+  
+  // Vérifier la longueur
+  if (cleanSlug.length === 0 || cleanSlug.length > 100) return null;
+  
+  return cleanSlug;
 }
 
 function validateArticle(article) {
@@ -39,18 +63,24 @@ function validateArticle(article) {
 // --- Fetch Articles ---
 async function fetchArticles() {
   try {
+    // Vérifier que l'origine est correcte
+    if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost') {
+      throw new Error('Connexion non sécurisée détectée');
+    }
+    
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), BLOG_CONFIG.TIMEOUT);
-
-    console.log('Chargement des articles depuis:', BLOG_CONFIG.API_URL);
 
     const response = await fetch(BLOG_CONFIG.API_URL, {
       method: 'GET',
       headers: { 
         'Accept': 'application/json',
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest' // Protection CSRF
       },
-      signal: controller.signal
+      signal: controller.signal,
+      mode: 'cors', // Explicite
+      credentials: 'omit' // Pas de cookies
     });
 
     clearTimeout(timeoutId);
@@ -73,8 +103,12 @@ async function fetchArticles() {
     return validArticles;
     
   } catch (err) {
+    const safeMessage = err.name === 'AbortError' ? 
+      'Délai de connexion dépassé' : 
+      'Erreur de chargement des articles';
+    
     console.error('Erreur de chargement:', err);
-    showErrorMessage(err.message);
+    showErrorMessage(safeMessage);
     return [];
   }
 }
